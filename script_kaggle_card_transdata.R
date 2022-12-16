@@ -1,7 +1,6 @@
 
-# script 01 - script kaggle cartao credito
+# Script Kaggle Fraude em Transações de Cartão de Crédito
 
-setwd('C:/Users/thari/Documents/Cursos/DataAcademy/Kaggle/fraude_cartao')
 getwd()
 
 library(dplyr)
@@ -372,7 +371,6 @@ resultado_geral = rbind(resultado_geral, resultado_v5)
 
 ## MODELO V6
 # random forest
-
 modelo_v6 = randomForest(fraud ~ .,
                         data = df_v4_smote,
                         ntree = 100,
@@ -468,46 +466,10 @@ resultado_v10 = c('Naive Bayes (com smote + normalizacao)', '91.25%', '94.97%')
 resultado_geral = rbind(resultado_geral, resultado_v10)
 
 
-# MODELO 11
-# linear discriminant analysis sem smote
-modelo_v11 = lda(fraud ~ ., data = treino_normalizado)
-modelo_v11
-
-previsao_v11 = predict(modelo_v11, teste_normalizado)$class
-
-matriz_confusao_v11 = confusionMatrix(previsao_v11, teste_normalizado$fraud)
-matriz_confusao_v11 # 96.06% acuracia
-
-roc_v11 = roc(teste_normalizado$fraud, factor(previsao_v11, ordered = TRUE))
-roc_v11 # ROC = 0.8423
-plot(roc_v11, col = 'red', lwd = 3, main = 'ROC Curve V11')
-
-resultado_v11 = c('Linear Discriminant Analysis (com normalizacao)', '96.06%', '84.23%')
-resultado_geral = rbind(resultado_geral, resultado_v11)
-
-
-# MODELO 12
-# linear discriminant analysis com smote
-modelo_v12 = lda(fraud ~ ., data = df_v4_smote)
-modelo_v12
-
-previsao_v12 = predict(modelo_v12, teste_v4_normalizado)$class
-
-matriz_confusao_v12 = confusionMatrix(previsao_v12, teste_v4_normalizado$fraud)
-matriz_confusao_v12 # 92.21% acuracia
-
-roc_v12 = roc(teste_v4_normalizado$fraud, factor(previsao_v12, ordered = TRUE))
-roc_v12 # ROC = 0.9471
-plot(roc_v12, col = 'red', lwd = 3, main = 'ROC Curve V12')
-
-resultado_v12 = c('Linear Discriminant Analysis (com smote + normalizacao)', '92.21%', '94.71%')
-resultado_geral = rbind(resultado_geral, resultado_v12)
-
-
-## MODELO V13
+## MODELO V11
 # xgboost com normalizacao
 
-modelo_v13 = xgboost(data = data.matrix(treino_v4_normalizado[, 1:7]),
+modelo_v11 = xgboost(data = data.matrix(treino_v4_normalizado[, 1:7]),
                      label = data.matrix(treino_v4_normalizado[, 8]),
                      nround = 20,
                      nthread = 3,
@@ -515,40 +477,26 @@ modelo_v13 = xgboost(data = data.matrix(treino_v4_normalizado[, 1:7]),
                      objective = 'binary:logistic')
 
 
-importance_matrix = xgb.importance(model = modelo_v13)
+importance_matrix = xgb.importance(model = modelo_v11)
 xgb.plot.importance(importance_matrix = importance_matrix)
 
-pred = predict(modelo_v13, data.matrix(teste_v4_normalizado[, 1:7]))
-previsao_v13 = as.numeric(pred > 0.7)
+pred = predict(modelo_v11, data.matrix(teste_v4_normalizado[, 1:7]))
+previsao_v11 = as.numeric(pred > 0.7)
 
-matriz_confusao_v13 = confusionMatrix(as.factor(previsao_v13), teste_v4_normalizado$fraud)
-matriz_confusao_v13 # 99.99% acuracia
+matriz_confusao_v11 = confusionMatrix(as.factor(previsao_v11), teste_v4_normalizado$fraud)
+matriz_confusao_v11 # 99.99% acuracia
 
-roc_v13 = roc(teste_v4_normalizado$fraud, factor(previsao_v13, ordered = TRUE))
-roc_v13 # ROC = 0.9999
-plot(roc_v13, col = 'red', lwd = 3, main = 'ROC Curve V13')
+roc_v11 = roc(teste_v4_normalizado$fraud, factor(previsao_v13, ordered = TRUE))
+roc_v11 # ROC = 0.9999
+plot(roc_v11, col = 'red', lwd = 3, main = 'ROC Curve V11')
 
-resultado_v13 = c('Xgboost (com normalizacao)', '99.99%', '99.99%')
-resultado_geral = rbind(resultado_geral, resultado_v13)
+resultado_v11 = c('Xgboost (com normalizacao)', '99.99%', '99.99%')
+resultado_geral = rbind(resultado_geral, resultado_v11)
 
 #
 resultado_geral_df = as.data.frame(resultado_geral, row.names = TRUE)
 names(resultado_geral_df) = c('Implementacao_Algoritmo', 'Acuracia', 'ROC')
 
-# pensar em como implementar
-Precision(teste_v4_normalizado$fraud, as.factor(previsao_v13))
-Recall(teste_v4_normalizado$fraud, as.factor(previsao_v13))
-F1_Score(teste_v4_normalizado$fraud, as.factor(previsao_v13))
-
-
-
-# IDEIAS
-
-# redução de dimensionalidade com t-SNE para tentar encontrar clusters
-# da variavel fraude, quando 0 ou 1, plotado entre duas variaveis do dataset
-# ver aqui 
-# https://towardsdatascience.com/detecting-credit-card-fraud-using-machine-learning-a3d83423d3b8
-# https://www.analyticsvidhya.com/blog/2017/01/t-sne-implementation-r-python/
 
 
 
