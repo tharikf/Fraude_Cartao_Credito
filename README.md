@@ -7,4 +7,6 @@ As variáveis utilizadas para identificar as fraudes estão relacionadas com a l
 
 Diante de um problema de classificação com dados desbalanceados, foram implementadas técnicas de compensação para balancear as classes. Desta maneira, foram testados diferentes algoritmos tanto sobre a base de dados desbalanceada quanto sobre a base de dados balanceada. Os algoritmos utilizados e os resultados podem ser encontrados na tabela abaixo.
 
-![alt text](score_algoritmos.jpg)
+<p align="center">
+  <img src="score_algoritmos.jpg" width="350" title="hover text">
+</p>
